@@ -463,5 +463,3 @@ for (const ch of WATCH_CHANNELS) {
 }, 15000);
 
 })();
-
-Kai bar post uthane mein bahut time lag raha hai 2 minut Se bhi jyada use kaise kam Karen
