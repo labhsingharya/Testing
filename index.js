@@ -114,35 +114,34 @@ function replaceTelegramLinks(text = "") {
 }
 
 function replaceProductSlug(text = "") {
-
+  // Is regex se Flipkart aur Shopsy ke saare links pakde jayenge
   return text.replace(
     /https?:\/\/(?:[\w.-]+\.)?(flipkart\.com|shopsy\.in)\/[^\s]*/gi,
     (url) => {
-
       try {
         const parsed = new URL(url);
+        const pid = parsed.searchParams.get("pid");
 
-        const pidMatch = url.match(/[?&]pid=([A-Z0-9]+)/i);
-
-        if (pidMatch) {
-          return `${parsed.origin}/lootdealtricky-telegram/p/?pid=${pidMatch[1]}`;
+        // Agar URL mein PID hai (jo ki Flipkart deals ke liye zaroori hai)
+        if (pid) {
+          // Naya URL structure banayein bina purane slugs ke
+          return `${parsed.origin}/lootdealtricky-telegram/p/?pid=${pid}`;
         }
 
-        if (url.includes("/p/")) {
-          return url.replace(
-            /(https?:\/\/(?:[\w.-]+\.)?(flipkart\.com|shopsy\.in))\/.*?\/p\//i,
-            `$1/lootdealtricky-telegram/p/`
-          );
+        // Agar /p/ waala link hai par PID search params mein nahi hai
+        if (parsed.pathname.includes("/p/")) {
+          return `${parsed.origin}/lootdealtricky-telegram/p/`;
         }
 
-        return `${parsed.origin}/lootdealtricky-telegram/p/`;
-
-      } catch {
-        return url;
+        // Agar normal link hai toh origin return karein ya original url
+        return url; 
+      } catch (e) {
+        return url; // Agar parsing fail ho toh original rehne dein
       }
     }
   );
 }
+
 
 /* ================= DUPLICATE CACHE ================= */
 
